@@ -1,0 +1,70 @@
+### What is worker Thread? 
+-> A Worker Thread is background thread whose job is to execute tasks assigned to it, instead of creating a new Thread for the each task.
+A worker thread waits for work → executes the work → waits again
+It does not die after one task. It is reused.
+
+==== Scenario: Restaurant kitchen ====
+Orders = tasks
+Chefs = worker threads
+
+❌ Bad approach:
+Hire a new chef for every order
+
+✅ Good approach:
+Fixed number of chefs
+Orders go to a queue
+Free chef picks next order
+That chef is a worker thread.
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+public class WorkerThreadExample {
+    public static void main(String[] args) {
+        ExecutorService executor =
+                Executors.newFixedThreadPool(2); // 2 worker threads
+        for (int i = 1; i <= 5; i++) {
+            int taskId = i;
+            executor.submit(() -> {
+                System.out.println(
+                    "Task " + taskId +
+                    " executed by " +
+                    Thread.currentThread().getName()
+                );
+            });
+        }
+        executor.shutdown();
+    }
+}
+======= output ====
+Task 1 executed by pool-1-thread-1
+Task 2 executed by pool-1-thread-2
+Task 3 executed by pool-1-thread-1
+Task 4 executed by pool-1-thread-2
+Task 5 executed by pool-1-thread-1
+
+### What is try-with-resource
+Try-with-resources is a Java feature (introduced in Java 7) used to automatically close resources such as:
+Files , Database connections ,Streams , Sockets
+It ensures that resources are closed properly, even if an exception occurs.
+In short:- 
+You open a resource → use it → Java closes it automatically
+
+### Why was try-with-resources introduced?
+Before this feature, developers had to close resources manually inside a finally block.
+
+Problems with old approach:
+Easy to forget closing
+Code becomes long and messy
+Risk of resource leaks
+Exception inside finally could hide original exception
+Try-with-resources solves all these problems.
+
+Scenario: Borrowing a book from a library
+~~ Old way (without try-with-resources)
+You borrow a book. You must remember to return it, If something goes wrong, you may forget to return it.
+
+~~ New way (try-with-resources)
+Library system auto-returns the book. Even if something goes wrong No chance of forgetting.
+
+
